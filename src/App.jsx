@@ -35,6 +35,7 @@ import Users from './pages/admin/Users';
 import AnnoncesAdmin from './pages/admin/AnnoncesAdmin';
 import CategoriesAdmin from './pages/admin/CategoriesAdmin';
 import SignalementsAdmin from './pages/admin/SignalementsAdmin';
+import { Confidentialite, SuppressionDonnees } from './pages/client/Legal';
 
 import './index.css';
 
@@ -60,6 +61,8 @@ function App() {
           <Route path="/inscription" element={<Register />} />
           <Route path="/inscription-prestataire" element={<RegisterVendeur />} />
           <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+          <Route path="/confidentialite" element={<Confidentialite />} />
+          <Route path="/suppression-donnees" element={<SuppressionDonnees />} />
           <Route path="/conversation/:contactId" element={<PrivateRoute><Conversation /></PrivateRoute>} />
 
           <Route element={<RoleLayout />}>
