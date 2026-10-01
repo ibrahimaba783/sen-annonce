@@ -109,6 +109,16 @@ export const AuthProvider = ({ children }) => {
     return data;
   };
 
+  // Connexion via Google ou Facebook
+  const socialLogin = async (provider, payload) => {
+    const { data } = await api.post(`/auth/${provider}`, payload);
+    if (data.needsRole) return data; // nouveau compte : il faut choisir le rôle
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('user', JSON.stringify(data));
+    setUser(data);
+    return data;
+  };
+
   const updateUser = (updatedUserData) => {
     const merged = { ...user, ...updatedUserData };
     setUser(merged);
@@ -136,6 +146,7 @@ export const AuthProvider = ({ children }) => {
         updateUser,
         login,
         register,
+        socialLogin,
         logout,
         loading,
         unreadMessages,
