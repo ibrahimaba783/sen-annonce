@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-const EMAIL = 'TON_EMAIL@gmail.com';
+const EMAIL = 'ibah2536@gmail.com';
 
 const wrap = {
   minHeight: '100vh',
