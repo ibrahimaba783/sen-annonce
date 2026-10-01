@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../api/axios';
 import { imageUrl } from '../../api/imageUrl';
 import { useAuth } from '../../context/AuthContext';
+import './AnnonceDetail.css';
 
 const TROIS_JOURS = 3 * 24 * 3600 * 1000;
 const DELAI_DIAPO = 4000;
@@ -16,6 +17,29 @@ const initiales = (u) => {
   const n = (u?.nom || '').trim()[0] || '';
   return (p + n).toUpperCase() || '?';
 };
+
+// Numéro au format international pour WhatsApp (sans + ni espaces)
+// Un numéro sénégalais à 9 chiffres reçoit l'indicatif 221
+const numeroWhatsApp = (tel) => {
+  let n = String(tel || '').replace(/\D/g, '');
+  if (!n) return null;
+  if (n.startsWith('00')) n = n.slice(2);
+  if (n.length === 9) n = `221${n}`;
+  if (n.length < 11 || n.length > 15) return null;
+  return n;
+};
+
+const IconWhatsApp = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d="M20.5 11.5a8.5 8.5 0 0 1-12.4 7.5L3.5 20.5l1.5-4.4A8.5 8.5 0 1 1 20.5 11.5z" />
+    <g transform="translate(6.4 6.2) scale(0.48)">
+      <path
+        strokeWidth="3.6"
+        d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"
+      />
+    </g>
+  </svg>
+);
 
 const AnnonceDetail = () => {
   const { id } = useParams();
@@ -244,6 +268,11 @@ const AnnonceDetail = () => {
   const nouveau = annonce.createdAt && Date.now() - new Date(annonce.createdAt).getTime() < TROIS_JOURS;
   const vendeurNom = `${vendeur.prenom || ''} ${vendeur.nom || ''}`.trim() || 'Vendeur';
   const anneeMembre = new Date(vendeur.createdAt || annonce.createdAt).getFullYear();
+
+  // Lien WhatsApp avec un message déjà rédigé
+  const numeroWa = numeroWhatsApp(vendeur.telephone);
+  const texteWa = `Bonjour${vendeur.prenom ? ` ${vendeur.prenom}` : ''}, je suis intéressé(e) par votre annonce « ${annonce.titre} » à ${Number(annonce.prix || 0).toLocaleString('fr-FR')} FCFA sur Annonces+.\n${window.location.href}`;
+  const lienWa = numeroWa ? `https://wa.me/${numeroWa}?text=${encodeURIComponent(texteWa)}` : null;
 
   return (
     <div className="ad-root">
@@ -495,8 +524,13 @@ const AnnonceDetail = () => {
                       📞 Appeler
                     </a>
                   )}
+                  {lienWa && (
+                    <a className="ad-btn ad-btn-wa" href={lienWa} target="_blank" rel="noopener noreferrer">
+                      <IconWhatsApp /> WhatsApp
+                    </a>
+                  )}
                   <button className="ad-btn ad-btn-primary" onClick={envoyerMessage}>
-                    💬 Envoyer un message
+                    💬 Message
                   </button>
                 </div>
               </div>
@@ -513,8 +547,13 @@ const AnnonceDetail = () => {
               📞 Appeler
             </a>
           )}
+          {lienWa && (
+            <a className="ad-btn ad-btn-wa" href={lienWa} target="_blank" rel="noopener noreferrer">
+              <IconWhatsApp /> WhatsApp
+            </a>
+          )}
           <button className="ad-btn ad-btn-primary" onClick={envoyerMessage}>
-            💬 Envoyer un message
+            💬 Message
           </button>
         </div>
       )}

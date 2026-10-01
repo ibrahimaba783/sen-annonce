@@ -1,0 +1,12 @@
+/* Bouton WhatsApp */
+.ad-btn-wa {
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: #fff;
+  box-shadow: 0 10px 22px -8px rgba(18, 140, 126, 0.6);
+}
+.ad-btn-wa:hover { box-shadow: 0 16px 30px -8px rgba(18, 140, 126, 0.7); }
+.ad-btn-wa svg { flex-shrink: 0; }
+
+/* Trois boutons côte à côte : Appeler, WhatsApp, Message */
+.ad-seller-actions .ad-btn { min-width: 0; padding: 14px 10px; white-space: nowrap; }
+.ad-mobile-bar .ad-btn { min-width: 0; padding: 13px 8px; font-size: 13.5px; gap: 6px; white-space: nowrap; }
