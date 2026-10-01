@@ -1,0 +1,52 @@
+.sa-root { margin-top: 20px; }
+
+.sa-sep { display: flex; align-items: center; gap: 12px; color: #94a3b8; font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+.sa-sep::before, .sa-sep::after { content: ''; flex: 1; height: 1px; background: #e2e8f0; }
+
+.sa-buttons { display: flex; flex-direction: column; gap: 12px; align-items: stretch; transition: opacity 0.25s; }
+.sa-buttons.busy { opacity: 0.55; pointer-events: none; }
+.sa-google { display: flex; justify-content: center; min-height: 44px; width: 100%; }
+
+.sa-fb {
+  position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 44px; box-sizing: border-box; padding: 0 16px;
+  border: none; border-radius: 999px; background: #1877f2; color: #fff; font-weight: 700; font-size: 14px; font-family: inherit; cursor: pointer;
+  box-shadow: 0 8px 18px -8px rgba(24, 119, 242, 0.7); transition: transform 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.sa-fb:hover:not(:disabled) { transform: translateY(-2px); background: #166fe5; box-shadow: 0 12px 22px -8px rgba(24, 119, 242, 0.8); }
+.sa-fb:active:not(:disabled) { transform: scale(0.98); }
+.sa-fb:disabled { opacity: 0.6; cursor: not-allowed; }
+.sa-fb::after { content: ''; position: absolute; top: 0; left: -120%; width: 60%; height: 100%; background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent); transform: skewX(-20deg); }
+.sa-fb:hover:not(:disabled)::after { animation: sa-sweep 0.8s; }
+
+.sa-error { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 12px; padding: 10px 14px; font-size: 13px; font-weight: 600; margin-bottom: 12px; text-align: left; animation: sa-shake 0.4s; }
+.sa-busy { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 14px; color: #475569; font-size: 13.5px; font-weight: 600; }
+.sa-spin { width: 18px; height: 18px; border-radius: 50%; border: 3px solid #bfdbfe; border-top-color: #2563eb; animation: sa-rotate 0.7s linear infinite; }
+
+/* ---------- Choix du rôle ---------- */
+.sa-overlay { position: fixed; inset: 0; z-index: 3000; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(5px); display: flex; align-items: center; justify-content: center; padding: 20px; animation: sa-fade 0.25s backwards; }
+.sa-modal { width: 100%; max-width: 400px; background: #fff; border-radius: 26px; padding: 28px 24px 20px; text-align: center; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4); animation: sa-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) backwards; }
+.sa-emoji { font-size: 44px; }
+.sa-modal h3 { margin: 6px 0 6px; font-size: 21px; font-weight: 800; color: #0f172a; }
+.sa-modal p { margin: 0 0 18px; font-size: 14px; color: #64748b; line-height: 1.5; word-break: break-word; }
+.sa-roles { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.sa-role {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 16px 8px; border: 2px solid #e2e8f0; border-radius: 18px; background: #fff; font-family: inherit; cursor: pointer;
+  transition: transform 0.25s, border-color 0.25s, background 0.25s, box-shadow 0.25s;
+}
+.sa-role span { font-size: 30px; transition: transform 0.3s; }
+.sa-role b { font-size: 15px; color: #0f172a; }
+.sa-role small { font-size: 12px; color: #64748b; }
+.sa-role:hover { transform: translateY(-4px); border-color: #2563eb; background: #eff6ff; box-shadow: 0 14px 26px -14px rgba(37, 99, 235, 0.5); }
+.sa-role:hover span { transform: scale(1.2) rotate(-6deg); }
+.sa-cancel { margin-top: 14px; border: none; background: none; color: #64748b; font-weight: 600; font-size: 13.5px; font-family: inherit; cursor: pointer; padding: 8px 14px; border-radius: 10px; }
+.sa-cancel:hover { background: #f1f5f9; }
+
+@keyframes sa-rotate { to { transform: rotate(360deg); } }
+@keyframes sa-sweep { from { left: -120%; } to { left: 140%; } }
+@keyframes sa-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes sa-pop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes sa-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sa-root *, .sa-root *::before, .sa-root *::after { animation: none !important; transition: none !important; }
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import SocialAuth from '../../components/SocialAuth';
 
 const ROLES = [
   { value: 'client', icon: '🛍️', titre: 'Client', desc: 'Acheter et commander' },
@@ -174,6 +175,8 @@ const Register = () => {
             {loading ? 'Inscription...' : role === 'vendeur' ? "S'inscrire comme vendeur" : "S'inscrire comme client"}
           </button>
         </form>
+
+        <SocialAuth role={role} label="ou s'inscrire avec" />
 
         <p className="auth-footer" style={{ marginTop: 24 }}>
           Déjà un compte ? <Link to="/connexion">Se connecter</Link>

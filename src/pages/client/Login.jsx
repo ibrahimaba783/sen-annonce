@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import SocialAuth from '../../components/SocialAuth';
 
 const Login = () => {
   const [identifiant, setIdentifiant] = useState('');
@@ -93,6 +94,7 @@ const Login = () => {
             {loading ? 'Connexion...' : 'Se connecter'}
           </button>
         </form>
+        <SocialAuth label="ou se connecter avec" />
 
         <div style={{ margin: '20px 0', display: 'flex', alignItems: 'center', gap: 10, color: 'var(--text-muted)', fontSize: 13 }}>
           <div style={{ flex: 1, height: 1, background: '#e5e7eb' }} />
