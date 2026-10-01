@@ -2,6 +2,52 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { imageUrl } from '../api/imageUrl';
 
+// Style du bouton de déconnexion (icône seule, avec effets au survol)
+const logoutStyles = `
+.logout-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #f43f5e 0%, #dc2626 100%);
+  box-shadow: 0 4px 14px rgba(244, 63, 94, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.logout-icon-btn svg {
+  transition: transform 0.25s ease;
+}
+.logout-icon-btn:hover {
+  transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 8px 20px rgba(244, 63, 94, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  filter: brightness(1.08);
+}
+.logout-icon-btn:hover svg {
+  transform: translateX(2px);
+}
+.logout-icon-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 8px rgba(244, 63, 94, 0.4);
+}
+.logout-icon-btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logout-icon-btn,
+  .logout-icon-btn svg {
+    transition: none;
+  }
+}
+`;
+
 const ClientLayout = () => {
   const { user, logout, unreadMessages, unreadNotifications, cartCount, isClient, isVendeur, isAdmin } = useAuth();
   const navigate = useNavigate();
@@ -49,6 +95,8 @@ const ClientLayout = () => {
 
   return (
     <div className="app-shell">
+      <style>{logoutStyles}</style>
+
       {/* Top Navy Header */}
       <header className="top-bar-navy">
         <NavLink to="/" className="brand">
@@ -117,32 +165,16 @@ const ClientLayout = () => {
 
               <button
                 type="button"
+                className="logout-icon-btn"
                 onClick={handleLogout}
                 title="Se déconnecter"
                 aria-label="Se déconnecter"
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid rgba(239, 68, 68, 0.5)',
-                  color: '#fecaca',
-                  borderRadius: 999,
-                  padding: '6px 14px',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  fontFamily: 'inherit',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                }}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-                Déconnexion
               </button>
             </>
           ) : (
