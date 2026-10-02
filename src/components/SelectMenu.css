@@ -1,0 +1,58 @@
+.sm-root { position: relative; min-width: 0; }
+.sm-root.open { z-index: 60; }
+
+.sm-trigger {
+  width: 100%; min-height: 54px; box-sizing: border-box; display: flex; align-items: center; gap: 12px; padding: 8px 14px 8px 8px; border-radius: 14px; border: 1.5px solid #e2e8f0; background: #f8fafc;
+  font-size: 15px; font-family: inherit; color: #94a3b8; text-align: left; cursor: pointer; outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.sm-trigger:hover:not(:disabled) { border-color: #bfdbfe; }
+.sm-trigger:focus-visible, .sm-root.open .sm-trigger { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); }
+.sm-trigger:disabled { opacity: 0.55; cursor: not-allowed; }
+.sm-ico { width: 38px; height: 38px; border-radius: 12px; background: var(--c, #e8eef7); display: flex; align-items: center; justify-content: center; font-size: 19px; flex-shrink: 0; }
+.sm-ico.set { animation: sm-pop 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.5); }
+.sm-txt { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sm-txt.set { color: #0f172a; font-weight: 700; }
+.sm-chevron { flex-shrink: 0; color: #64748b; transition: transform 0.3s, color 0.3s; }
+.sm-root.open .sm-chevron { transform: rotate(180deg); color: #2563eb; }
+.pa-field.err .sm-trigger { border-color: #f87171; background: #fef2f2; animation: sm-shake 0.4s; }
+
+/* ---------- Panneau ---------- */
+.sm-panel {
+  position: absolute; left: 0; right: 0; top: calc(100% + 8px); min-width: 240px; background: #fff; border: 1px solid #e2e8f0; border-radius: 20px; padding: 8px;
+  box-shadow: 0 28px 56px -16px rgba(15, 23, 42, 0.4); transform-origin: top center; animation: sm-drop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2) backwards;
+}
+.sm-panel.up { top: auto; bottom: calc(100% + 8px); transform-origin: bottom center; animation-name: sm-rise; }
+
+.sm-search { position: relative; margin: 2px 2px 8px; }
+.sm-search svg { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: #94a3b8; pointer-events: none; }
+.sm-search input {
+  width: 100%; box-sizing: border-box; padding: 11px 12px 11px 38px; border-radius: 12px; border: 1.5px solid #e2e8f0; background: #f8fafc; font-size: 14px; font-family: inherit; color: #0f172a; outline: none;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+}
+.sm-search input:focus { border-color: #2563eb; background: #fff; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+/* ---------- Liste ---------- */
+.sm-list { list-style: none; margin: 0; padding: 2px 6px 2px 2px; overflow-x: hidden; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #bfdbfe transparent; }
+.sm-opt {
+  display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 14px; cursor: pointer; color: #1e293b; font-size: 14.5px; font-weight: 600;
+  transition: background 0.2s, transform 0.2s; animation: sm-opt-in 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+}
+.sm-opt.act { background: linear-gradient(90deg, #eff6ff, #ffffff); transform: translateX(4px); }
+.sm-opt.sel { background: #eff6ff; color: #1d4ed8; }
+.sm-opt-ico { width: 36px; height: 36px; border-radius: 12px; background: var(--c, #dbeafe); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; transition: transform 0.3s; }
+.sm-opt.act .sm-opt-ico { transform: scale(1.12) rotate(-6deg); }
+.sm-opt-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sm-check { color: #2563eb; font-weight: 800; }
+.sm-sep { height: 1px; margin: 8px 6px; background: #e2e8f0; }
+.sm-none { padding: 22px 10px; text-align: center; color: #94a3b8; font-size: 13.5px; }
+
+@keyframes sm-drop { from { opacity: 0; transform: translateY(-10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes sm-rise { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes sm-opt-in { from { opacity: 0; transform: translateX(-14px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes sm-pop { 0% { transform: scale(0.5); } 100% { transform: scale(1); } }
+@keyframes sm-shake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .sm-root *, .sm-panel { animation: none !important; transition: none !important; }
+}

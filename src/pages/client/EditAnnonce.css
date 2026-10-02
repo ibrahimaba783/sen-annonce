@@ -1,0 +1,27 @@
+.ea-head-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 6px; }
+.ea-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; padding: 5px 13px; border-radius: 999px; }
+.ea-chip.on { background: #dcfce7; color: #15803d; }
+.ea-chip.on::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #16a34a; animation: pa-pulse 1.8s infinite; }
+.ea-chip.wait { background: #fef3c7; color: #b45309; }
+.ea-chip.ko { background: #fee2e2; color: #b91c1c; }
+.ea-chip.off { background: #e2e8f0; color: #475569; }
+.ea-chip.vues { background: #eff6ff; color: #1d4ed8; }
+
+.ea-sub { margin: 4px 0 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: #94a3b8; }
+.ea-notice { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; padding: 11px 14px; border-radius: 14px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 13.5px; font-weight: 600; animation: pa-fade-up 0.4s backwards; }
+.ea-notice.warn { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }
+
+.ea-old { margin-bottom: 16px; }
+.ea-old .pa-photo { cursor: default; }
+.ea-old.replaced .pa-photo img { filter: grayscale(1); opacity: 0.4; }
+.ea-old.replaced .pa-photo::after {
+  content: 'Sera remplacée'; position: absolute; left: 8px; right: 8px; bottom: 8px; text-align: center; background: rgba(15, 23, 42, 0.75); color: #fff; font-size: 11px; font-weight: 700; padding: 4px 8px; border-radius: 999px;
+}
+.ea-none { padding: 14px; text-align: center; color: #94a3b8; font-size: 13.5px; background: #f8fafc; border-radius: 14px; margin-bottom: 14px; }
+
+.pa-btn.primary:disabled { opacity: 0.55; box-shadow: none; }
+.ea-dirty { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #b45309; font-weight: 600; animation: pa-fade-up 0.4s backwards; }
+.ea-dirty::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; animation: pa-pulse 1.6s infinite; }
+
+.ea-skel { border-radius: 24px; background: linear-gradient(90deg, #eef2f7 25%, #f8fafc 50%, #eef2f7 75%); background-size: 200% 100%; animation: ea-shimmer 1.4s infinite; }
+@keyframes ea-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }

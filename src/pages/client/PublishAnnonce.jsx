@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../../api/axios';
 import { useAuth } from '../../context/AuthContext';
+import SelectMenu, { iconeCategorie } from '../../components/SelectMenu';
+import PreviewSlides from '../../components/PreviewSlides';
 import './PublishAnnonce.css';
 
 const MAX_PHOTOS = 5;
@@ -11,58 +13,15 @@ const VILLES = [
   'Dakar', 'Pikine', 'Guédiawaye', 'Rufisque', 'Thiès', 'Mbour', 'Saint-Louis', 'Touba', 'Kaolack', 'Ziguinchor',
   'Diourbel', 'Louga', 'Tambacounda', 'Kolda', 'Fatick', 'Kaffrine', 'Matam', 'Sédhiou', 'Kédougou',
 ];
+const OPTIONS_VILLES = [
+  ...VILLES.map((v) => ({ value: v, label: v, icon: '📍' })),
+  { value: '__autre', label: 'Autre ville…', icon: '✏️', separe: true },
+];
 const CONFETTIS = ['#3b82f6', '#22c55e', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
 
 const FORM_VIDE = { titre: '', categorie: '', prix: '', ville: '', villeAutre: '', description: '' };
 
 const fcfa = (n) => `${Number(n || 0).toLocaleString('fr-FR')} FCFA`;
-
-// Aperçu de la carte avec diaporama sur les photos choisies
-const PreviewSlides = ({ urls }) => {
-  const [i, setI] = useState(0);
-
-  useEffect(() => {
-    if (urls.length < 2) {
-      setI(0);
-      return undefined;
-    }
-    let reduit = false;
-    try {
-      reduit = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    } catch (e) {
-      reduit = false;
-    }
-    if (reduit) return undefined;
-    const t = setInterval(() => setI((x) => (x + 1) % urls.length), 2600);
-    return () => clearInterval(t);
-  }, [urls.length]);
-
-  const actif = urls.length ? i % urls.length : 0;
-
-  if (urls.length === 0) {
-    return (
-      <div className="pa-pv-empty">
-        <span>📷</span>
-        Vos photos apparaîtront ici
-      </div>
-    );
-  }
-
-  return (
-    <>
-      {urls.map((u, idx) => (
-        <img key={u} className={`pa-slide ${idx === actif ? 'on' : ''}`} src={u} alt="" />
-      ))}
-      {urls.length > 1 && (
-        <div className="pa-pv-dots">
-          {urls.map((u, idx) => (
-            <i key={u} className={idx === actif ? 'on' : ''} />
-          ))}
-        </div>
-      )}
-    </>
-  );
-};
 
 const PublishAnnonce = () => {
   const { user, isVendeur } = useAuth();
@@ -97,8 +56,18 @@ const PublishAnnonce = () => {
     };
   }, []);
 
+  const optionsCategories = useMemo(
+    () => categories.map((c) => ({ value: c._id, label: c.nom, icon: iconeCategorie(c) })),
+    [categories]
+  );
+
   const onChange = (e) => {
     const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+    if (erreurs[name]) setErreurs((er) => ({ ...er, [name]: undefined }));
+  };
+
+  const choisir = (name, value) => {
     setForm((f) => ({ ...f, [name]: value }));
     if (erreurs[name]) setErreurs((er) => ({ ...er, [name]: undefined }));
   };
@@ -133,7 +102,7 @@ const PublishAnnonce = () => {
     ]);
   };
 
-  const choisir = (e) => {
+  const choisirFichiers = (e) => {
     ajouterFichiers(e.target.files);
     if (fileRef.current) fileRef.current.value = '';
   };
@@ -310,7 +279,7 @@ const PublishAnnonce = () => {
               </span>
               <span>JPG, PNG ou WebP · 5 Mo maximum par photo</span>
             </button>
-            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={choisir} style={{ display: 'none' }} />
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={choisirFichiers} style={{ display: 'none' }} />
 
             {photos.length > 0 && (
               <>
@@ -363,14 +332,15 @@ const PublishAnnonce = () => {
 
               <div className={`pa-field ${erreurs.categorie ? 'err' : ''}`}>
                 <label htmlFor="pa-categorie">Catégorie</label>
-                <select id="pa-categorie" className="pa-select" name="categorie" value={form.categorie} onChange={onChange}>
-                  <option value="">Sélectionner</option>
-                  {categories.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.nom}
-                    </option>
-                  ))}
-                </select>
+                <SelectMenu
+                  id="pa-categorie"
+                  options={optionsCategories}
+                  value={form.categorie}
+                  onChange={(v) => choisir('categorie', v)}
+                  placeholder="Sélectionner"
+                  icon="🗂️"
+                  searchPlaceholder="Rechercher une catégorie..."
+                />
                 {erreurs.categorie && <span className="pa-error">{erreurs.categorie}</span>}
               </div>
 
@@ -390,15 +360,15 @@ const PublishAnnonce = () => {
 
               <div className={`pa-field ${form.ville === '__autre' ? '' : 'full'} ${erreurs.ville && form.ville !== '__autre' ? 'err' : ''}`}>
                 <label htmlFor="pa-ville">Localisation</label>
-                <select id="pa-ville" className="pa-select" name="ville" value={form.ville} onChange={onChange}>
-                  <option value="">Sélectionner la ville</option>
-                  {VILLES.map((v) => (
-                    <option key={v} value={v}>
-                      {v}
-                    </option>
-                  ))}
-                  <option value="__autre">Autre ville…</option>
-                </select>
+                <SelectMenu
+                  id="pa-ville"
+                  options={OPTIONS_VILLES}
+                  value={form.ville}
+                  onChange={(v) => choisir('ville', v)}
+                  placeholder="Sélectionner la ville"
+                  icon="📍"
+                  searchPlaceholder="Rechercher une ville..."
+                />
                 {erreurs.ville && form.ville !== '__autre' && <span className="pa-error">{erreurs.ville}</span>}
               </div>
 
@@ -471,7 +441,7 @@ const PublishAnnonce = () => {
                 <span className="pa-pv-new">Nouveau</span>
               </div>
               <div className="pa-pv-body">
-                <h4 className={`pa-pv-title ${form.titre.trim() ? '' : 'ph'}`}>{form.titre.trim() || "Le titre de votre annonce"}</h4>
+                <h4 className={`pa-pv-title ${form.titre.trim() ? '' : 'ph'}`}>{form.titre.trim() || 'Le titre de votre annonce'}</h4>
                 <p className={`pa-pv-price ${prixNombre > 0 ? '' : 'ph'}`}>{prixNombre > 0 ? fcfa(prixNombre) : '0 FCFA'}</p>
                 <div className={`pa-pv-meta ${villeFinale ? '' : 'ph'}`}>
                   <span>📍 {villeFinale || 'Ville'}</span>

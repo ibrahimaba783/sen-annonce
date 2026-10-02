@@ -913,3 +913,47 @@ input, select, textarea { font-family: inherit; font-size: 15px; }
   animation: ad-progress 4s linear forwards;
 }
 @keyframes ad-progress { from { width: 0; } to { width: 100%; } }
+
+/* ============ PAGES EN PLEINE LARGEUR ============ */
+:root { --page-px: clamp(14px, 3vw, 56px); }
+
+/* La barre du haut s'aligne sur les marges des pages */
+.app-shell .top-bar-navy { padding-left: var(--page-px); padding-right: var(--page-px); }
+
+/* Chaque page occupe toute la largeur (plafond à 1760 px sur les très grands écrans) */
+.app-shell .app-content > * {
+  width: 100%;
+  max-width: 1760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: var(--page-px) !important;
+  padding-right: var(--page-px) !important;
+}
+
+/* Accueil : plus de colonnes quand l'écran est large */
+.app-shell .hm-grid { grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); }
+@media (max-width: 720px) { .app-shell .hm-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 380px) { .app-shell .hm-grid { grid-template-columns: 1fr; } }
+
+/* Listes : plusieurs colonnes sur grand écran */
+@media (min-width: 1100px) {
+  .app-shell .ma-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(620px, 1fr)); gap: 14px; }
+  .app-shell .ms-list,
+  .app-shell .no-group .no-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 10px; }
+  .app-shell .co-list,
+  .app-shell .mc-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(640px, 1fr)); gap: 18px; align-items: start; }
+}
+
+/* Profil : la carte d'identité à gauche, le menu à droite */
+@media (min-width: 1000px) {
+  .app-shell .pf-root { display: grid; grid-template-columns: 400px minmax(0, 1fr); gap: 22px 28px; align-items: start; }
+  .app-shell .pf-hero { grid-column: 1; grid-row: 1 / span 3; position: sticky; top: 84px; }
+  .app-shell .pf-stats { grid-column: 2; grid-row: 1; margin: 0; }
+  .app-shell .pf-menu { grid-column: 2; grid-row: 2; }
+  .app-shell .pf-logout { grid-column: 2; grid-row: 3; margin-top: 0; }
+}
+
+/* Publier / Modifier : l'aperçu un peu plus large sur grand écran */
+@media (min-width: 1300px) {
+  .app-shell .pa-layout { grid-template-columns: minmax(0, 1fr) 400px; }
+}
