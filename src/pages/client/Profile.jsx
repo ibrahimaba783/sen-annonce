@@ -26,10 +26,10 @@ const Compteur = ({ valeur }) => {
 };
 
 const Profile = () => {
-  const { user, updateUser, logout, isClient, isVendeur, isAdmin, unreadMessages, unreadNotifications, cartCount } = useAuth();
+  const { user, updateUser, logout, isVendeur, isAdmin, unreadMessages, unreadNotifications } = useAuth();
   const navigate = useNavigate();
 
-  const [stats, setStats] = useState(null);
+  const [annoncesStats, setAnnoncesStats] = useState(null); // vendeur uniquement
   const [photoOk, setPhotoOk] = useState(true);
   const [confirmer, setConfirmer] = useState(false);
 
@@ -46,49 +46,49 @@ const Profile = () => {
     setPhotoOk(true);
   }, [user?.photo]);
 
-  // Statistiques selon le rôle
+  // Statistiques des annonces (vendeur)
   useEffect(() => {
-    if (!user?._id) return undefined;
+    if (!user?._id || !isVendeur) return undefined;
     let annule = false;
 
-    const charger = async () => {
-      if (isVendeur) {
-        const [annonces, commandes] = await Promise.allSettled([api.get('/annonces/mes-annonces'), api.get('/orders/vendeur')]);
+    api
+      .get('/annonces/mes-annonces')
+      .then((res) => {
         if (annule) return;
-        const a = annonces.status === 'fulfilled' && Array.isArray(annonces.value.data) ? annonces.value.data : [];
-        const c = commandes.status === 'fulfilled' && Array.isArray(commandes.value.data) ? commandes.value.data : [];
-        setStats({
-          type: 'vendeur',
-          items: [
-            { ico: '✅', valeur: a.filter((x) => x.statut === 'validee' && x.actif !== false).length, label: 'En ligne' },
-            { ico: '👁️', valeur: a.reduce((s, x) => s + (x.vues || 0), 0), label: 'Vues' },
-            { ico: '📥', valeur: c.filter((x) => x.statut === 'en_attente').length, label: 'À traiter' },
-          ],
-          aTraiter: c.filter((x) => x.statut === 'en_attente').length,
+        const a = Array.isArray(res.data) ? res.data : [];
+        setAnnoncesStats({
+          enLigne: a.filter((x) => x.statut === 'validee' && x.actif !== false).length,
+          vues: a.reduce((s, x) => s + (x.vues || 0), 0),
         });
-      } else {
-        const commandes = await Promise.allSettled([api.get('/orders/client')]);
-        if (annule) return;
-        const c = commandes[0].status === 'fulfilled' && Array.isArray(commandes[0].value.data) ? commandes[0].value.data : [];
-        const enCours = c.filter((x) => ['en_attente', 'acceptee', 'en_cours_livraison'].includes(x.statut)).length;
-        setStats({
-          type: 'client',
-          items: [
-            { ico: '📦', valeur: c.length, label: 'Commandes' },
-            { ico: '🚚', valeur: enCours, label: 'En cours' },
-            { ico: '❤️', valeur: (user.favoris || []).length, label: 'Favoris' },
-          ],
-          enCours,
-        });
-      }
-    };
+      })
+      .catch(() => {
+        if (!annule) setAnnoncesStats({ enLigne: 0, vues: 0 });
+      });
 
-    charger();
     return () => {
       annule = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?._id, isVendeur, user?.favoris?.length]);
+  }, [user?._id, isVendeur]);
+
+  const nbFavoris = (user?.favoris || []).length;
+
+  // Cartes de statistiques selon le rôle
+  let statsItems = null;
+  if (isVendeur) {
+    if (annoncesStats) {
+      statsItems = [
+        { ico: '✅', valeur: annoncesStats.enLigne, label: 'En ligne' },
+        { ico: '👁️', valeur: annoncesStats.vues, label: 'Vues' },
+        { ico: '❤️', valeur: nbFavoris, label: 'Favoris' },
+      ];
+    }
+  } else {
+    statsItems = [
+      { ico: '❤️', valeur: nbFavoris, label: 'Favoris' },
+      { ico: '💬', valeur: unreadMessages || 0, label: 'Messages' },
+      { ico: '🔔', valeur: unreadNotifications || 0, label: 'Alertes' },
+    ];
+  }
 
   const deconnecter = () => {
     logout();
@@ -104,15 +104,7 @@ const Profile = () => {
 
   const menu = [
     { to: '/profil/infos', icon: '👤', label: 'Informations personnelles', sub: 'Photo, coordonnées et mot de passe' },
-    ...(isVendeur
-      ? [
-          { to: '/mes-annonces', icon: '📋', label: 'Mes annonces', sub: 'Gérer mes publications' },
-          { to: '/vendeur/commandes', icon: '📥', label: 'Commandes reçues', sub: 'Accepter et livrer', badge: stats?.aTraiter, bleu: true },
-        ]
-      : [
-          { to: '/mes-commandes', icon: '📦', label: 'Mes commandes', sub: 'Suivre mes achats', badge: stats?.enCours, bleu: true },
-          { to: '/panier', icon: '🛒', label: 'Mon panier', sub: 'Articles à commander', badge: cartCount, bleu: true },
-        ]),
+    ...(isVendeur ? [{ to: '/mes-annonces', icon: '📋', label: 'Mes annonces', sub: 'Gérer mes publications' }] : []),
     { to: '/favoris', icon: '❤️', label: 'Favoris', sub: 'Mes annonces préférées' },
     { to: '/messages', icon: '💬', label: 'Messages', sub: 'Mes conversations', badge: unreadMessages },
     { to: '/notifications', icon: '🔔', label: 'Notifications', sub: 'Mes alertes', badge: unreadNotifications },
@@ -146,8 +138,8 @@ const Profile = () => {
       </section>
 
       <div className="pf-stats">
-        {stats
-          ? stats.items.map((s) => (
+        {statsItems
+          ? statsItems.map((s) => (
               <div key={s.label} className="pf-stat">
                 <div className="ico">{s.ico}</div>
                 <b>
@@ -173,7 +165,7 @@ const Profile = () => {
               {item.label}
               <small>{item.sub}</small>
             </span>
-            {item.badge > 0 && <span className={`pf-badge ${item.bleu ? 'blue' : ''}`}>{item.badge > 99 ? '99+' : item.badge}</span>}
+            {item.badge > 0 && <span className="pf-badge">{item.badge > 99 ? '99+' : item.badge}</span>}
             <span className="pf-arrow">›</span>
           </Link>
         ))}
