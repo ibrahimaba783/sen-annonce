@@ -49,7 +49,7 @@ const logoutStyles = `
 `;
 
 const ClientLayout = () => {
-  const { user, logout, unreadMessages, unreadNotifications, cartCount, isClient, isVendeur, isAdmin } = useAuth();
+  const { user, logout, unreadMessages, unreadNotifications, isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -62,7 +62,7 @@ const ClientLayout = () => {
     ? [
         { to: '/', label: 'Accueil', icon: '🏠' },
         { to: '/categories', label: 'Catégories', icon: '📂' },
-        ...(isVendeur ? [{ to: '/publier', label: 'Publier', icon: '➕', isFab: true }] : [{ to: '/panier', label: 'Panier', icon: '🛒', count: cartCount }]),
+        { to: '/publier', label: 'Publier', icon: '➕', isFab: true },
         { to: '/messages', label: 'Messages', icon: '💬', count: unreadMessages },
         {
           to: '/profil',
@@ -97,10 +97,11 @@ const ClientLayout = () => {
     <div className="app-shell">
       <style>{logoutStyles}</style>
 
-      {/* Top Navy Header */}
+      {/* Top Header */}
       <header className="top-bar-navy">
-        <NavLink to="/" className="brand">
-          <span>Annonces+</span>
+        <NavLink to="/" className="brand" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+          <img src="/logo.jpg" alt="SenAnnonce Logo" style={{ height: 38, width: 'auto', borderRadius: 8, objectFit: 'contain' }} />
+          <span style={{ fontWeight: 800, fontSize: 20, color: '#fff' }}>SenAnnonce</span>
         </NavLink>
 
         <nav className="nav-links">
@@ -110,32 +111,12 @@ const ClientLayout = () => {
 
           {user ? (
             <>
-              {isClient && (
-                <>
-                  <NavLink to="/panier" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`} style={{ position: 'relative' }}>
-                    Panier 🛒
-                    {cartCount > 0 && (
-                      <span style={{ background: '#ef4444', color: 'white', fontSize: 10, fontWeight: 700, padding: '1px 5px', borderRadius: 10, marginLeft: 4 }}>
-                        {cartCount}
-                      </span>
-                    )}
-                  </NavLink>
-                  <NavLink to="/mes-commandes" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>
-                    Commandes
-                  </NavLink>
-                </>
-              )}
-
-              {isVendeur && (
-                <>
-                  <NavLink to="/mes-annonces" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>
-                    Mes annonces
-                  </NavLink>
-                  <NavLink to="/vendeur/commandes" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>
-                    Commandes reçues
-                  </NavLink>
-                </>
-              )}
+              <NavLink to="/mes-annonces" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>
+                Mes annonces
+              </NavLink>
+              <NavLink to="/favoris" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>
+                Favoris
+              </NavLink>
 
               {isAdmin && (
                 <NavLink to="/admin" className={({ isActive }) => `nav-link-item ${isActive ? 'active' : ''}`}>

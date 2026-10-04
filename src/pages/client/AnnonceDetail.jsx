@@ -44,7 +44,7 @@ const IconWhatsApp = () => (
 const AnnonceDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, isClient, fetchCartCount } = useAuth();
+  const { user } = useAuth();
 
   const [annonce, setAnnonce] = useState(null);
   const [erreur, setErreur] = useState(false);
@@ -52,9 +52,6 @@ const AnnonceDetail = () => {
   const [paused, setPaused] = useState(false);
   const [isFavori, setIsFavori] = useState(false);
   const [signale, setSignale] = useState(false);
-  const [quantite, setQuantite] = useState(1);
-  const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState(null);
   const [toast, setToast] = useState(null);
   const [lightbox, setLightbox] = useState(false);
 
@@ -71,8 +68,6 @@ const AnnonceDetail = () => {
     setAnnonce(null);
     setErreur(false);
     setIndex(0);
-    setQuantite(1);
-    setMsg(null);
     api
       .get(`/annonces/${id}`)
       .then((res) => {
@@ -154,25 +149,6 @@ const AnnonceDetail = () => {
   const envoyerMessage = () => {
     if (!user) return navigate('/connexion');
     navigate(`/conversation/${annonce.utilisateur._id}?annonce=${annonce._id}`);
-  };
-
-  const ajouterAuPanier = async (allerAuPaiement) => {
-    if (!user) return navigate('/connexion');
-    setBusy(true);
-    setMsg(null);
-    try {
-      await api.post('/cart/add', { annonceId: annonce._id, quantite });
-      await fetchCartCount();
-      if (allerAuPaiement) {
-        navigate('/commander');
-      } else {
-        setMsg({ type: 'ok', text: 'Ajouté au panier ✓' });
-      }
-    } catch (err) {
-      setMsg({ type: 'err', text: err.response?.data?.message || "Erreur lors de l'ajout au panier" });
-    } finally {
-      setBusy(false);
-    }
   };
 
   const toggleFavori = async () => {
@@ -263,7 +239,6 @@ const AnnonceDetail = () => {
   const vendeur = annonce.utilisateur || {};
   const ownerId = vendeur._id || annonce.utilisateur;
   const isOwner = !!user && !!ownerId && user._id.toString() === ownerId.toString();
-  const peutCommander = !isOwner && (!user || isClient);
   const disponible = annonce.actif !== false;
   const nouveau = annonce.createdAt && Date.now() - new Date(annonce.createdAt).getTime() < TROIS_JOURS;
   const vendeurNom = `${vendeur.prenom || ''} ${vendeur.nom || ''}`.trim() || 'Vendeur';
@@ -420,52 +395,6 @@ const AnnonceDetail = () => {
               </span>
             </div>
           </section>
-
-          {/* Commande (clients et visiteurs) */}
-          {peutCommander && (
-            <section className="ad-card">
-              <h3>Commander cet article</h3>
-              {!disponible ? (
-                <p className="ad-unavailable">Cette annonce n'est plus disponible.</p>
-              ) : (
-                <>
-                  <div className="ad-qty-row">
-                    <span>Quantité</span>
-                    <div className="ad-stepper">
-                      <button onClick={() => setQuantite((q) => Math.max(1, q - 1))} aria-label="Diminuer">
-                        −
-                      </button>
-                      <span>{quantite}</span>
-                      <button onClick={() => setQuantite((q) => Math.min(99, q + 1))} aria-label="Augmenter">
-                        +
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="ad-total">
-                    <span>Total</span>
-                    <strong>{(annonce.prix * quantite).toLocaleString('fr-FR')} FCFA</strong>
-                  </div>
-
-                  <div className="ad-btn-row">
-                    <button className="ad-btn ad-btn-soft" onClick={() => ajouterAuPanier(false)} disabled={busy}>
-                      🛒 Ajouter au panier
-                    </button>
-                    <button className="ad-btn ad-btn-primary" onClick={() => ajouterAuPanier(true)} disabled={busy}>
-                      ⚡ Commander maintenant
-                    </button>
-                  </div>
-
-                  {msg && (
-                    <div className={`ad-msg ${msg.type}`}>
-                      <span>{msg.text}</span>
-                      {msg.type === 'ok' && <button onClick={() => navigate('/panier')}>Voir le panier</button>}
-                    </div>
-                  )}
-                </>
-              )}
-            </section>
-          )}
 
           {/* Propriétaire */}
           {isOwner && (

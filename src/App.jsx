@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import PrivateRoute from './components/PrivateRoute';
 
 import RoleLayout from './layouts/RoleLayout';
 import AdminLayout from './layouts/AdminLayout';
 
+import Home from './pages/client/Home';
 import ChooseRole from './pages/client/ChooseRole';
-import Splash from './pages/client/Splash';
-import HomeGate from './pages/client/HomeGate';
 import Login from './pages/client/Login';
 import Register from './pages/client/Register';
 import RegisterVendeur from './pages/client/RegisterVendeur';
 import ForgotPassword from './pages/client/ForgotPassword';
+import ResetPassword from './pages/client/ResetPassword';
 import Search from './pages/client/Search';
 import Categories from './pages/client/Categories';
 import AnnonceDetail from './pages/client/AnnonceDetail';
@@ -25,10 +25,6 @@ import ProfileInfos from './pages/client/ProfileInfos';
 import Parametres from './pages/client/Parametres';
 import Notifications from './pages/client/Notifications';
 import Favoris from './pages/client/Favoris';
-import Panier from './pages/client/Panier';
-import Commander from './pages/client/Commander';
-import MesCommandes from './pages/client/MesCommandes';
-import CommandesRecues from './pages/client/CommandesRecues';
 
 import Dashboard from './pages/admin/Dashboard';
 import Users from './pages/admin/Users';
@@ -55,18 +51,19 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/demarrage" element={<Splash />} />
+          <Route path="/demarrage" element={<Navigate to="/" replace />} />
           <Route path="/rejoindre" element={<ChooseRole />} />
           <Route path="/connexion" element={<Login />} />
           <Route path="/inscription" element={<Register />} />
           <Route path="/inscription-prestataire" element={<RegisterVendeur />} />
           <Route path="/mot-de-passe-oublie" element={<ForgotPassword />} />
+          <Route path="/reinitialiser-mot-de-passe/:token" element={<ResetPassword />} />
           <Route path="/confidentialite" element={<Confidentialite />} />
           <Route path="/suppression-donnees" element={<SuppressionDonnees />} />
           <Route path="/conversation/:contactId" element={<PrivateRoute><Conversation /></PrivateRoute>} />
 
           <Route element={<RoleLayout />}>
-            <Route path="/" element={<HomeGate />} />
+            <Route path="/" element={<Home />} />
             <Route path="/recherche" element={<Search />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/annonce/:id" element={<AnnonceDetail />} />
@@ -79,11 +76,6 @@ function App() {
             <Route path="/profil/infos" element={<PrivateRoute><ProfileInfos /></PrivateRoute>} />
             <Route path="/parametres" element={<PrivateRoute><Parametres /></PrivateRoute>} />
             <Route path="/notifications" element={<PrivateRoute><Notifications /></PrivateRoute>} />
-
-            <Route path="/panier" element={<PrivateRoute><Panier /></PrivateRoute>} />
-            <Route path="/commander" element={<PrivateRoute><Commander /></PrivateRoute>} />
-            <Route path="/mes-commandes" element={<PrivateRoute><MesCommandes /></PrivateRoute>} />
-            <Route path="/vendeur/commandes" element={<PrivateRoute><CommandesRecues /></PrivateRoute>} />
           </Route>
 
           <Route element={<PrivateRoute adminOnly><AdminLayout /></PrivateRoute>}>

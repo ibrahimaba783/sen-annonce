@@ -10,36 +10,12 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
-  const [cartCount, setCartCount] = useState(0);
-
-  // Le panier n'existe que pour les clients
-  const fetchCartCount = useCallback(async () => {
-    const token = localStorage.getItem('token');
-    let role = null;
-    try {
-      role = JSON.parse(localStorage.getItem('user') || 'null')?.role;
-    } catch (e) {
-      role = null;
-    }
-    if (!token || (role && role !== 'client')) {
-      setCartCount(0);
-      return;
-    }
-    try {
-      const res = await api.get('/cart');
-      const count = res.data?.articles?.reduce((acc, item) => acc + (item.quantite || 1), 0) || 0;
-      setCartCount(count);
-    } catch (err) {
-      setCartCount(0);
-    }
-  }, []);
 
   const fetchUnreadCounts = useCallback(async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       setUnreadMessages(0);
       setUnreadNotifications(0);
-      setCartCount(0);
       return;
     }
     try {
@@ -49,11 +25,10 @@ export const AuthProvider = ({ children }) => {
       ]);
       setUnreadMessages(resMsg.data?.unreadCount || 0);
       setUnreadNotifications(resNotif.data?.unreadCount || 0);
-      fetchCartCount();
     } catch (err) {
       console.error(err);
     }
-  }, [fetchCartCount]);
+  }, []);
 
   // Vérification de la session au démarrage
   useEffect(() => {
@@ -89,7 +64,6 @@ export const AuthProvider = ({ children }) => {
     } else {
       setUnreadMessages(0);
       setUnreadNotifications(0);
-      setCartCount(0);
     }
   }, [user, fetchUnreadCounts]);
 
@@ -131,7 +105,6 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setUnreadMessages(0);
     setUnreadNotifications(0);
-    setCartCount(0);
   };
 
   const isClient = user && (user.role === 'client' || !user.role);
@@ -151,8 +124,6 @@ export const AuthProvider = ({ children }) => {
         loading,
         unreadMessages,
         unreadNotifications,
-        cartCount,
-        fetchCartCount,
         fetchUnreadCounts,
         isClient,
         isVendeur,
