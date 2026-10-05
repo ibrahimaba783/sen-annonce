@@ -34,9 +34,13 @@ const AdminLayout = () => {
 
       <aside className={`admin-sidebar ${ouvert ? 'open' : ''}`}>
         <div className="admin-logo">
-          <span className="admin-logo-ico">⚡</span>
+          <img
+            src="/logo.jpg"
+            alt="Logo SenAnnonce"
+            style={{ height: 42, width: 'auto', borderRadius: 10, objectFit: 'contain', flexShrink: 0 }}
+          />
           <span>
-            Annonces<b>+</b>
+            Sen<b>Annonce</b>
             <small>Administration</small>
           </span>
         </div>
