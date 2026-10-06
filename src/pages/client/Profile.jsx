@@ -7,6 +7,75 @@ import './Profile.css';
 
 const LIBELLES_ROLES = { client: 'Client', vendeur: 'Vendeur', prestataire: 'Vendeur', admin: 'Administrateur' };
 
+// ---------- Icônes (SVG) ----------
+const Svg = ({ size = 22, children }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {children}
+  </svg>
+);
+const IUser = (p) => (
+  <Svg {...p}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </Svg>
+);
+const IList = (p) => (
+  <Svg {...p}>
+    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+    <rect x="8" y="2" width="8" height="4" rx="1" />
+  </Svg>
+);
+const IHeart = (p) => <Svg {...p}><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z" /></Svg>;
+const IChat = (p) => <Svg {...p}><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.6-.8L3 21l1.9-5.4A8.4 8.4 0 1 1 21 11.5z" /></Svg>;
+const IBell = (p) => (
+  <Svg {...p}>
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+  </Svg>
+);
+const ISliders = (p) => (
+  <Svg {...p}>
+    <line x1="4" y1="21" x2="4" y2="14" />
+    <line x1="4" y1="10" x2="4" y2="3" />
+    <line x1="12" y1="21" x2="12" y2="12" />
+    <line x1="12" y1="8" x2="12" y2="3" />
+    <line x1="20" y1="21" x2="20" y2="16" />
+    <line x1="20" y1="12" x2="20" y2="3" />
+    <line x1="1" y1="14" x2="7" y2="14" />
+    <line x1="9" y1="8" x2="15" y2="8" />
+    <line x1="17" y1="16" x2="23" y2="16" />
+  </Svg>
+);
+const IShield = (p) => <Svg {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></Svg>;
+const ICheck = (p) => (
+  <Svg {...p}>
+    <path d="M22 11.1V12a10 10 0 1 1-5.9-9.1" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </Svg>
+);
+const IEye = (p) => (
+  <Svg {...p}>
+    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z" />
+    <circle cx="12" cy="12" r="3" />
+  </Svg>
+);
+const IPencil = (p) => (
+  <Svg {...p}>
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+  </Svg>
+);
+const ILogout = (p) => (
+  <Svg {...p}>
+    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+    <polyline points="16 17 21 12 16 7" />
+    <line x1="21" y1="12" x2="9" y2="12" />
+  </Svg>
+);
+
+// Couleur des icônes de statistiques (suit la couleur de fond de chaque carte)
+const COULEURS_STATS = ['#15803d', '#1d4ed8', '#dc2626'];
+
 // Compteur animé de 0 jusqu'à la valeur
 const Compteur = ({ valeur }) => {
   const [n, setN] = useState(0);
@@ -77,16 +146,16 @@ const Profile = () => {
   if (isVendeur) {
     if (annoncesStats) {
       statsItems = [
-        { ico: '✅', valeur: annoncesStats.enLigne, label: 'En ligne' },
-        { ico: '👁️', valeur: annoncesStats.vues, label: 'Vues' },
-        { ico: '❤️', valeur: nbFavoris, label: 'Favoris' },
+        { ico: <ICheck />, valeur: annoncesStats.enLigne, label: 'En ligne' },
+        { ico: <IEye />, valeur: annoncesStats.vues, label: 'Vues' },
+        { ico: <IHeart />, valeur: nbFavoris, label: 'Favoris' },
       ];
     }
   } else {
     statsItems = [
-      { ico: '❤️', valeur: nbFavoris, label: 'Favoris' },
-      { ico: '💬', valeur: unreadMessages || 0, label: 'Messages' },
-      { ico: '🔔', valeur: unreadNotifications || 0, label: 'Alertes' },
+      { ico: <IHeart />, valeur: nbFavoris, label: 'Favoris' },
+      { ico: <IChat />, valeur: unreadMessages || 0, label: 'Messages' },
+      { ico: <IBell />, valeur: unreadNotifications || 0, label: 'Alertes' },
     ];
   }
 
@@ -103,13 +172,13 @@ const Profile = () => {
   const roleLabel = LIBELLES_ROLES[user?.role] || 'Client';
 
   const menu = [
-    { to: '/profil/infos', icon: '👤', label: 'Informations personnelles', sub: 'Photo, coordonnées et mot de passe' },
-    ...(isVendeur ? [{ to: '/mes-annonces', icon: '📋', label: 'Mes annonces', sub: 'Gérer mes publications' }] : []),
-    { to: '/favoris', icon: '❤️', label: 'Favoris', sub: 'Mes annonces préférées' },
-    { to: '/messages', icon: '💬', label: 'Messages', sub: 'Mes conversations', badge: unreadMessages },
-    { to: '/notifications', icon: '🔔', label: 'Notifications', sub: 'Mes alertes', badge: unreadNotifications },
-    { to: '/parametres', icon: '⚙️', label: 'Paramètres', sub: "Préférences de l'application" },
-    ...(isAdmin ? [{ to: '/admin', icon: '🛡️', label: 'Administration', sub: 'Tableau de bord admin' }] : []),
+    { to: '/profil/infos', icon: <IUser />, label: 'Informations personnelles', sub: 'Photo, coordonnées et mot de passe' },
+    ...(isVendeur ? [{ to: '/mes-annonces', icon: <IList />, label: 'Mes annonces', sub: 'Gérer mes publications' }] : []),
+    { to: '/favoris', icon: <IHeart />, label: 'Favoris', sub: 'Mes annonces préférées' },
+    { to: '/messages', icon: <IChat />, label: 'Messages', sub: 'Mes conversations', badge: unreadMessages },
+    { to: '/notifications', icon: <IBell />, label: 'Notifications', sub: 'Mes alertes', badge: unreadNotifications },
+    { to: '/parametres', icon: <ISliders />, label: 'Paramètres', sub: "Préférences de l'application" },
+    ...(isAdmin ? [{ to: '/admin', icon: <IShield />, label: 'Administration', sub: 'Tableau de bord admin' }] : []),
   ];
 
   return (
@@ -132,16 +201,16 @@ const Profile = () => {
             {membreDepuis && <span className="pf-chip">Membre depuis {membreDepuis}</span>}
           </div>
           <Link to="/profil/infos" className="pf-edit">
-            ✏️ Modifier mon profil
+            <IPencil size={16} /> Modifier mon profil
           </Link>
         </div>
       </section>
 
       <div className="pf-stats">
         {statsItems
-          ? statsItems.map((s) => (
+          ? statsItems.map((s, i) => (
               <div key={s.label} className="pf-stat">
-                <div className="ico">{s.ico}</div>
+                <div className="ico" style={{ color: COULEURS_STATS[i] }}>{s.ico}</div>
                 <b>
                   <Compteur valeur={s.valeur} />
                 </b>
@@ -160,7 +229,7 @@ const Profile = () => {
       <nav className="pf-menu" aria-label="Menu du profil">
         {menu.map((item, i) => (
           <Link key={item.to} to={item.to} className="pf-item" style={{ animationDelay: `${0.15 + i * 0.06}s` }}>
-            <span className="pf-ico">{item.icon}</span>
+            <span className="pf-ico" style={{ color: '#2563eb' }}>{item.icon}</span>
             <span className="pf-label">
               {item.label}
               <small>{item.sub}</small>
@@ -172,13 +241,15 @@ const Profile = () => {
       </nav>
 
       <button className="pf-logout" style={{ animationDelay: `${0.2 + menu.length * 0.06}s` }} onClick={() => setConfirmer(true)}>
-        🚪 Déconnexion
+        <ILogout size={18} /> Déconnexion
       </button>
 
       {confirmer && (
         <div className="pf-overlay" onClick={() => setConfirmer(false)}>
           <div className="pf-modal" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <div className="emoji">👋</div>
+            <div className="emoji" style={{ color: '#dc2626', display: 'flex', justifyContent: 'center' }}>
+              <ILogout size={44} />
+            </div>
             <h3>Se déconnecter ?</h3>
             <p>Vous pourrez vous reconnecter à tout moment avec votre email et votre mot de passe.</p>
             <div className="pf-modal-actions">

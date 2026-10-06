@@ -2,6 +2,54 @@ import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { imageUrl } from '../api/imageUrl';
 
+// ---------- Icônes (SVG) ----------
+const Svg = ({ size = 24, children }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {children}
+  </svg>
+);
+const IconHome = (p) => <Svg {...p}><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z" /></Svg>;
+const IconGrid = (p) => (
+  <Svg {...p}>
+    <rect x="3" y="3" width="7" height="7" rx="1.5" />
+    <rect x="14" y="3" width="7" height="7" rx="1.5" />
+    <rect x="3" y="14" width="7" height="7" rx="1.5" />
+    <rect x="14" y="14" width="7" height="7" rx="1.5" />
+  </Svg>
+);
+const IconPlus = (p) => (
+  <Svg {...p}>
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
+  </Svg>
+);
+const IconChat = (p) => <Svg {...p}><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.6-.8L3 21l1.9-5.4A8.4 8.4 0 1 1 21 11.5z" /></Svg>;
+const IconUser = (p) => (
+  <Svg {...p}>
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </Svg>
+);
+const IconSearch = (p) => (
+  <Svg {...p}>
+    <circle cx="11" cy="11" r="7" />
+    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </Svg>
+);
+const IconLogin = (p) => (
+  <Svg {...p}>
+    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+    <polyline points="10 17 15 12 10 7" />
+    <line x1="15" y1="12" x2="3" y2="12" />
+  </Svg>
+);
+const IconBell = (p) => (
+  <Svg {...p}>
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+  </Svg>
+);
+
 // Style du bouton de déconnexion (icône seule, avec effets au survol)
 const logoutStyles = `
 .logout-icon-btn {
@@ -60,10 +108,10 @@ const ClientLayout = () => {
   // NavItems pour la barre basse mobile
   const navItems = user
     ? [
-        { to: '/', label: 'Accueil', icon: '🏠' },
-        { to: '/categories', label: 'Catégories', icon: '📂' },
-        { to: '/publier', label: 'Publier', icon: '➕', isFab: true },
-        { to: '/messages', label: 'Messages', icon: '💬', count: unreadMessages },
+        { to: '/', label: 'Accueil', icon: <IconHome /> },
+        { to: '/categories', label: 'Catégories', icon: <IconGrid /> },
+        { to: '/publier', label: 'Publier', icon: <IconPlus size={26} />, isFab: true },
+        { to: '/messages', label: 'Messages', icon: <IconChat />, count: unreadMessages },
         {
           to: '/profil',
           label: 'Profil',
@@ -82,15 +130,15 @@ const ClientLayout = () => {
               }}
             />
           ) : (
-            '👤'
+            <IconUser />
           ),
         },
       ]
     : [
-        { to: '/', label: 'Accueil', icon: '🏠' },
-        { to: '/categories', label: 'Catégories', icon: '📂' },
-        { to: '/recherche', label: 'Recherche', icon: '🔍' },
-        { to: '/connexion', label: 'Connexion', icon: '🔑' },
+        { to: '/', label: 'Accueil', icon: <IconHome /> },
+        { to: '/categories', label: 'Catégories', icon: <IconGrid /> },
+        { to: '/recherche', label: 'Recherche', icon: <IconSearch /> },
+        { to: '/connexion', label: 'Connexion', icon: <IconLogin /> },
       ];
 
   return (
@@ -124,8 +172,8 @@ const ClientLayout = () => {
                 </NavLink>
               )}
 
-              <NavLink to="/notifications" className="nav-link-item" style={{ position: 'relative' }}>
-                🔔
+              <NavLink to="/notifications" className="nav-link-item" style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 2 }} aria-label="Notifications">
+                <IconBell size={20} />
                 {unreadNotifications > 0 && (
                   <span style={{ background: '#ef4444', color: 'white', fontSize: 10, fontWeight: 700, padding: '1px 5px', borderRadius: 10, marginLeft: 2 }}>
                     {unreadNotifications}
@@ -184,9 +232,11 @@ const ClientLayout = () => {
           >
             <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
               {item.isFab ? (
-                <div className="fab-circle">➕</div>
+                <div className="fab-circle" style={{ color: '#fff' }}>
+                  {item.icon}
+                </div>
               ) : (
-                <span className="nav-icon">{item.icon}</span>
+                <span className="nav-icon" style={{ display: 'inline-flex' }}>{item.icon}</span>
               )}
               {item.count > 0 && (
                 <span className="badge-count" style={{ position: 'absolute', top: -4, right: -8, fontSize: 10, padding: '2px 5px' }}>
